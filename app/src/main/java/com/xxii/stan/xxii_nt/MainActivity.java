@@ -39,6 +39,7 @@ import java.util.TreeMap;
 import android.os.Process;
 
 import android.os.Environment;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,15 +52,22 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         verifyStoragePermissions(this);
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         ListView userInstalledApps = (ListView)findViewById(R.id.installed_app_list);
 
         List<AppList> installedApps = getInstalledApps();
         AppAdapter installedAppAdapter = new AppAdapter(MainActivity.this, installedApps);
         userInstalledApps.setAdapter(installedAppAdapter);
-    }
 
+
+        final Button btNtCache = (Button) findViewById(R.id.btNtCache);
+        btNtCache.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            }
+
+        });
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -112,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
         for (int i = 0; i < packs.size(); i++) {
             PackageInfo p = packs.get(i);
-            if ((isSystemPackage(p) == false)) {
+            if (!isSystemPackage(p)) {
                 String appName = p.applicationInfo.loadLabel(getPackageManager()).toString();
                 Drawable icon = p.applicationInfo.loadIcon(getPackageManager());
                 res.add(new AppList(appName, icon));
@@ -122,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isSystemPackage(PackageInfo pkgInfo) {
-        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true : false;
+        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1);
     }
 
-/*    public static void xxii_nt(View view) {
+    public static void xxii_nt(View view) {
 
         String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
         String chemin = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.txt";
@@ -147,5 +155,5 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-    }*/
+    }
 }
