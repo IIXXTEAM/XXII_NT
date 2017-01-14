@@ -3,7 +3,7 @@ package com.xxii.stan.xxii_nt;
 import android.graphics.drawable.Drawable;
 
 public class AppList {
-
+/* Définition de la liste nom app + icone */
     private String name;
     Drawable icon;
 
