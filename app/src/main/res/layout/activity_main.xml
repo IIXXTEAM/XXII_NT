@@ -21,16 +21,39 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:weightSum="1">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="399dp"
+            android:layout_weight="0.86">
+            <ListView
+                android:id="@+id/installed_app_list"
+                android:layout_width="wrap_content"
+                android:layout_height="518dp"
+                android:scrollbars="none"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="133dp" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="166dp"
-        android:layout_height="178dp"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/star_big_off"
-        android:layout_gravity="center_vertical|center"
-        app:backgroundTint="@android:color/holo_blue_light"
-        app:rippleColor="@android:color/background_light" />
+        </LinearLayout>
+
+        <Button
+            android:text="Button"
+            android:layout_width="201dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/button2" />
+
+    </LinearLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -9,7 +9,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,9 +39,11 @@ import java.util.TreeMap;
 import android.os.Process;
 
 import android.os.Environment;
+import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
-    @SuppressWarnings("all")
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         verifyStoragePermissions(this);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                xxii_nt(view);
-            }
-        });
+        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        ListView userInstalledApps = (ListView)findViewById(R.id.installed_app_list);
+
+        List<AppList> installedApps = getInstalledApps();
+        AppAdapter installedAppAdapter = new AppAdapter(MainActivity.this, installedApps);
+        userInstalledApps.setAdapter(installedAppAdapter);
     }
 
     @Override
@@ -101,45 +106,24 @@ public class MainActivity extends AppCompatActivity {
             );
         }
     }
-    private List processList() {
 
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            String currentApp = null;
-            UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-            long time = System.currentTimeMillis();
-            List<UsageStats> applist = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
-            if (applist != null && applist.size() > 0) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
-                for (UsageStats usageStats : applist) {
-                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-                    Log.d("topActivity", "CURRENT Activity ::" + usageStats);
-
-                }
-                if (mySortedMap != null && !mySortedMap.isEmpty()) {
-                    currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                    Log.d("topActivity", "CURRENT Activity ::" + currentApp);
-
-                }
-            } else {
-                ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-                List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-                Log.d("topActivity", "CURRENT Activity ::" + taskInfo.get(0).topActivity.getClassName());
-                ComponentName componentInfo = taskInfo.get(0).topActivity;
-                componentInfo.getPackageName();
-
+    private List<AppList> getInstalledApps() {
+        List<AppList> res = new ArrayList<AppList>();
+        List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
+        for (int i = 0; i < packs.size(); i++) {
+            PackageInfo p = packs.get(i);
+            if ((isSystemPackage(p) == false)) {
+                String appName = p.applicationInfo.loadLabel(getPackageManager()).toString();
+                Drawable icon = p.applicationInfo.loadIcon(getPackageManager());
+                res.add(new AppList(appName, icon));
             }
         }
-        return null;
-    }
-    public void xxii_nt(View view) {
-        List listeApp = processList();
-        Snackbar.make(view, "OK", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-
+        return res;
     }
 
-
+    private boolean isSystemPackage(PackageInfo pkgInfo) {
+        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true : false;
+    }
 
 /*    public static void xxii_nt(View view) {
 
