@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">XXII_NT</string>
+    <string name="action_settings">Options</string>
+    <string name="action_nt">Nettoyage en cours</string>
+</resources>
