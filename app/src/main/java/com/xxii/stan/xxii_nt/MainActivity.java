@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         final Button btNtCache = (Button) findViewById(R.id.btNtCache);
         btNtCache.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                CacheCleaner();
+                reboot();
             }
 
         });
@@ -106,6 +107,49 @@ public class MainActivity extends AppCompatActivity {
                 am.killBackgroundProcesses(runningProcess.toString());
         }*/
     }
+
+
+    public boolean testRoot() {
+
+
+        boolean rootResult = false;
+        try {
+            Runtime rt = Runtime.getRuntime();
+            rt.exec("su");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Toast.makeText(this, "Vous êtes root", Toast.LENGTH_SHORT).show();
+        return rootResult;
+    }
+
+
+
+    public boolean reboot() {
+
+        try {
+            Runtime.getRuntime().freeMemory();
+            Runtime.getRuntime().exec(new String[] { "su", "-c", "reboot" });
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+public boolean deplacementApp() {
+    PackageManager m = getPackageManager();
+    String xxiiApp = getPackageName();
+    try {
+        PackageInfo p = m.getPackageInfo(xxiiApp, 0);
+        xxiiApp = p.applicationInfo.dataDir;
+    } catch (PackageManager.NameNotFoundException e) {
+        Log.w("Erreur", "APK non trouvé", e);
+    }
+
+    return false;
+}
 
 /*Fonctionne et liste les app installées */
     private List<AppList> getInstalledApps() {

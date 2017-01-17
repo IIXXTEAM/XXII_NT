@@ -14,13 +14,10 @@ public class TestPermissions extends MainActivity {
  * Pour les versions antérieures il faut aussi les définir dans AndroiManifest.xml */
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static final int KILL_BACKGROUND_PROCESSES = 1;
+    private static final int REQUEST_BACKGROUND_PROCESSES = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.DELETE_CACHE_FILES,
-            Manifest.permission.CLEAR_APP_CACHE,
-            Manifest.permission.KILL_BACKGROUND_PROCESSES
     };
 
     /* Vérification des permissions et demande utilisateur si besoin */
@@ -38,6 +35,9 @@ public class TestPermissions extends MainActivity {
         }
     }
 
+    private static String[] PERMISSIONS_PROCESS = {
+            Manifest.permission.KILL_BACKGROUND_PROCESSES
+    };
     /* Vérification des permissions et demande utilisateur si besoin */
     public static void verifyProcessPermissions(Activity activity) {
         // Check if we have write permission
@@ -46,8 +46,27 @@ public class TestPermissions extends MainActivity {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     activity,
-                    PERMISSIONS_STORAGE,
-                    KILL_BACKGROUND_PROCESSES
+                    PERMISSIONS_PROCESS,
+                    REQUEST_BACKGROUND_PROCESSES
+
+            );
+        }
+    }
+
+    private static String[] PERMISSIONS_CACHE = {
+            Manifest.permission.DELETE_CACHE_FILES,
+            Manifest.permission.CLEAR_APP_CACHE
+    };
+    /* Vérification des permissions et demande utilisateur si besoin */
+    public static void verifyCachePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission2 = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CLEAR_APP_CACHE);
+        if (permission2 != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_CACHE,
+                    REQUEST_BACKGROUND_PROCESSES
 
             );
         }

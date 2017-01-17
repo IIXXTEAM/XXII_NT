@@ -44,14 +44,14 @@ public class AppAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.installed_app_list, parent, false);
 
             listViewHolder.textInListView = (TextView)convertView.findViewById(R.id.list_app_name);
-            listViewHolder.textInListView = (TextView)convertView.findViewById(R.id.list_cache_dir);
+           // listViewHolder.textInListView = (TextView)convertView.findViewById(R.id.list_cache_dir);
             listViewHolder.imageInListView = (ImageView)convertView.findViewById(R.id.app_icon);
             convertView.setTag(listViewHolder);
         }else{
             listViewHolder = (ViewHolder)convertView.getTag();
         }
         listViewHolder.textInListView.setText(listStorage.get(position).getName());
-        listViewHolder.textInListView.setText(listStorage.get(position).getCacheDir());
+       // listViewHolder.textInListView.setText(listStorage.get(position).getCacheDir());
         listViewHolder.imageInListView.setImageDrawable(listStorage.get(position).getIcon());
 
         return convertView;

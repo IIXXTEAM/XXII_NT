@@ -18,7 +18,7 @@ public class AppList {
     public String getName() {
         return name;
     }
-    public String getCacheDir() { return cachedir; }
+    //public String getCacheDir() { return cachedir; }
     public Drawable getIcon() {
         return icon;
     }
