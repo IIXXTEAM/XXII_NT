@@ -3,4 +3,7 @@
     <string name="hello_world">XXII_NT</string>
     <string name="action_settings">Options</string>
     <string name="action_nt">Nettoyage en cours</string>
+    <string name="appwidget_text">XXIICLEANER</string>
+    <string name="configure">Configurer</string>
+    <string name="add_widget">Ajouter le widget</string>
 </resources>
