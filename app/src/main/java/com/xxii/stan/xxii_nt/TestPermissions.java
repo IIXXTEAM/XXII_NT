@@ -16,9 +16,12 @@ public class TestPermissions extends MainActivity {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static final int REQUEST_BACKGROUND_PROCESSES = 1;
-    private static String[] PERMISSIONS_STORAGE = {
+    private static final String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
+    private static final String[] PERMISSIONS_PROCESS = {
+            Manifest.permission.KILL_BACKGROUND_PROCESSES
     };
 
     /* Vérification des permissions et demande utilisateur si besoin */
@@ -36,9 +39,6 @@ public class TestPermissions extends MainActivity {
         }
     }
 
-    private static String[] PERMISSIONS_PROCESS = {
-            Manifest.permission.KILL_BACKGROUND_PROCESSES
-    };
     /* Vérification des permissions et demande utilisateur si besoin */
     public static void verifyProcessPermissions(Activity activity) {
         // Check if we have write permission
@@ -54,10 +54,6 @@ public class TestPermissions extends MainActivity {
         }
     }
 
-    private static String[] PERMISSIONS_CACHE = {
-            Manifest.permission.DELETE_CACHE_FILES,
-            Manifest.permission.CLEAR_APP_CACHE
-    };
     /* Vérification des permissions et demande utilisateur si besoin */
     public static void verifyCachePermissions(Activity activity) {
 
@@ -81,9 +77,6 @@ public class TestPermissions extends MainActivity {
                         new String[]{Manifest.permission.CLEAR_APP_CACHE},
                         1);
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         }
     }

@@ -22,44 +22,35 @@
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"
         android:weightSum="1">
+
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="399dp"
-            android:layout_weight="0.86">
-            <ListView
-                android:id="@+id/installed_app_list"
-                android:layout_width="wrap_content"
-                android:layout_height="518dp"
-                android:scrollbars="none"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="133dp" />
+            android:layout_weight="0.86"
+            android:orientation="horizontal">
 
         </LinearLayout>
 
         <Button
-            android:text="Vider le Cache"
+            android:id="@+id/btNtCache"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btNtCache" />
+            android:text="Vider le Cache" />
 
         <Button
-            android:text="Stopper les processus"
+            android:id="@+id/btNtProcess"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btNtProcess" />
+            android:text="Stopper les processus" />
 
     </LinearLayout>
-
 
 
 </android.support.design.widget.CoordinatorLayout>

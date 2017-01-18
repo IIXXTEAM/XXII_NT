@@ -5,31 +5,16 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+//    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                File cacheDir = myCt.getCacheDir();
+                File cacheDir = myCt != null ? myCt.getCacheDir() : null;
                 File extCacheDir = myCt.getExternalCacheDir();
                 if (cacheDir.exists()) {
 
@@ -119,11 +104,11 @@ public class MainActivity extends AppCompatActivity {
                         });
                         Snackbar.make(v, "Votre cache à été nettoyé avec succes ;)", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
 
                     }
                 }
-                if (extCacheDir.exists()) {
+                if (extCacheDir != null && extCacheDir.exists()) {
 
                     try {
                         Runtime.getRuntime().exec(new String[]{
@@ -132,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                         //deleteDir(new File(appDir, s));
                         Snackbar.make(v, "Votre cache externe à été nettoyé avec succès", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -141,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void processCleaner(View v) {
+    private void processCleaner(View v) {
         List<ApplicationInfo> packages;
         PackageManager pm;
         pm = getPackageManager();
@@ -155,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             if (packageInfo.packageName.equals("com.xxii.stan.xxii_nt")) continue;
             try {
                 mActivityManager.killBackgroundProcesses(packageInfo.packageName);
-                String appKill = packageInfo.packageName;
+
 
                 Snackbar.make(v, "Le tueur de taches à terminé son travail", Snackbar.LENGTH_LONG);
 
