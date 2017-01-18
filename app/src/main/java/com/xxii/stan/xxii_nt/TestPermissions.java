@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 /**
  * Created by stan on 15/01/2017.
@@ -59,16 +60,31 @@ public class TestPermissions extends MainActivity {
     };
     /* Vérification des permissions et demande utilisateur si besoin */
     public static void verifyCachePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission2 = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CLEAR_APP_CACHE);
-        if (permission2 != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_CACHE,
-                    REQUEST_BACKGROUND_PROCESSES
 
-            );
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.CLEAR_APP_CACHE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.CLEAR_APP_CACHE)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.CLEAR_APP_CACHE},
+                        1);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
         }
     }
 }

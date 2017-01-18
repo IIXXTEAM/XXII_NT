@@ -1,18 +1,15 @@
 package com.xxii.stan.xxii_nt;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,13 +20,25 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +46,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         TestPermissions.verifyStoragePermissions(this);
         TestPermissions.verifyProcessPermissions(this);
-        ListView userInstalledApps = (ListView)findViewById(R.id.installed_app_list);
-
-        List<AppList> installedApps = getInstalledApps();
-        AppAdapter installedAppAdapter = new AppAdapter(MainActivity.this, installedApps);
-        userInstalledApps.setAdapter(installedAppAdapter);
+        TestPermissions.verifyCachePermissions(this);
 
 
         final Button btNtCache = (Button) findViewById(R.id.btNtCache);
+        final Button btNtProcess = (Button) findViewById(R.id.btNtProcess);
         btNtCache.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                reboot();
+                cacheCleaner(v);
+            }
+
+        });
+        btNtProcess.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                processCleaner(v);
             }
 
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -76,161 +90,84 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-/* Test de récupération des processus en arrière plan */
+/* Récupération des applications installées + nettoyage du dossier cache de chacune ROOT */
 
-    private void CacheCleaner() {
+    private void cacheCleaner(View v) {
 
-
-        List<AppList> res = new ArrayList<AppList>();
         List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
 
         for (int i = 0; i < packs.size(); i++) {
 
             PackageInfo p = packs.get(i);
-            String test = p.applicationInfo.processName;
-            String dir = p.applicationInfo.dataDir.toString()+ "/cache";
-            String nom = p.applicationInfo.loadLabel(getPackageManager()).toString();
-            File path = new File(dir.toString());
             if (!isSystemPackage(p)) {
-                if (dir != "/data/user/0/com.xxii.stan.xxii_nt/cache"){
-                    DeleteRecursive(path);
+                String nomProcess = p.applicationInfo.processName;
+                Context myCt = null;
+
+                try {
+                    myCt = createPackageContext(nomProcess, 0);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
                 }
 
-            }
+                File cacheDir = myCt.getCacheDir();
+                File extCacheDir = myCt.getExternalCacheDir();
+                if (cacheDir.exists()) {
 
-        }
-        /*ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-        final List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-        for(ActivityManager.RunningAppProcessInfo runningProcess : runningProcesses) {
-                Log.v("Hello", "kill process "+runningProcess.pid);
-                //android.os.Process.killProcess(runningProcess.pid);
-                am.killBackgroundProcesses(runningProcess.toString());
-        }*/
-    }
+                    try {
+                        Runtime.getRuntime().exec(new String[]{
+                                "su", "-c", "rm -R " + cacheDir
+                        });
+                        Snackbar.make(v, "Votre cache à été nettoyé avec succes ;)", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    } catch (Exception e) {
 
+                    }
+                }
+                if (extCacheDir.exists()) {
 
-    public boolean testRoot() {
+                    try {
+                        Runtime.getRuntime().exec(new String[]{
+                                "su", "-c", "rm -R " + extCacheDir
+                        });
+                        //deleteDir(new File(appDir, s));
+                        Snackbar.make(v, "Votre cache externe à été nettoyé avec succès", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    } catch (Exception e) {
 
-
-        boolean rootResult = false;
-        try {
-            Runtime rt = Runtime.getRuntime();
-            rt.exec("su");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //Toast.makeText(this, "Vous êtes root", Toast.LENGTH_SHORT).show();
-        return rootResult;
-    }
-
-
-
-    public boolean reboot() {
-
-        try {
-            Runtime.getRuntime().freeMemory();
-            Runtime.getRuntime().exec(new String[] { "su", "-c", "reboot" });
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-public boolean deplacementApp() {
-    PackageManager m = getPackageManager();
-    String xxiiApp = getPackageName();
-    try {
-        PackageInfo p = m.getPackageInfo(xxiiApp, 0);
-        xxiiApp = p.applicationInfo.dataDir;
-    } catch (PackageManager.NameNotFoundException e) {
-        Log.w("Erreur", "APK non trouvé", e);
-    }
-
-    return false;
-}
-
-/*Fonctionne et liste les app installées */
-    private List<AppList> getInstalledApps() {
-        List<AppList> res = new ArrayList<AppList>();
-        List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
-        for (int i = 0; i < packs.size(); i++) {
-            PackageInfo p = packs.get(i);
-
-            if (!isSystemPackage(p)) {
-
-                String appName = p.applicationInfo.loadLabel(getPackageManager()).toString();
-                Drawable icon = p.applicationInfo.loadIcon(getPackageManager());
-                String appCacheDir = p.applicationInfo.dataDir.toString()+ "/cache";
-                res.add(new AppList(appName, appCacheDir, icon));
+                    }
+                }
             }
         }
-        return res;
+
     }
 
-/*Flag à mettre à 0 pour supprimer les app système du résultat*/
+    public void processCleaner(View v) {
+        List<ApplicationInfo> packages;
+        PackageManager pm;
+        pm = getPackageManager();
+        //get a list of installed apps.
+        packages = pm.getInstalledApplications(0);
+
+        ActivityManager mActivityManager = (ActivityManager) getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ApplicationInfo packageInfo : packages) {
+            if ((packageInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1) continue;
+            if (packageInfo.packageName.equals("com.xxii.stan.xxii_nt")) continue;
+            try {
+                mActivityManager.killBackgroundProcesses(packageInfo.packageName);
+                String appKill = packageInfo.packageName;
+
+                Snackbar.make(v, "Le tueur de taches à terminé son travail", Snackbar.LENGTH_LONG);
+
+            } catch (Exception e) {
+                Snackbar.make(v, "Erreur de nettoyage processus", Snackbar.LENGTH_LONG);
+
+            }
+        }
+    }
+
+    /*Flag à mettre à 0 pour supprimer les app système du résultat*/
     private boolean isSystemPackage(PackageInfo pkgInfo) {
         return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
-    }
-
-/*Fonction kill process (fonctionne mais ne kill que notre app) */
-
-    public void appProcess () {
-
-        ActivityManager actvityManager = (ActivityManager)
-                getApplicationContext().getSystemService( getApplicationContext().ACTIVITY_SERVICE );
-        List<ActivityManager.RunningAppProcessInfo> procInfos = actvityManager.getRunningAppProcesses();
-
-        for(int pnum = 0; pnum < procInfos.size(); pnum++)
-        {
-            if((procInfos.get(pnum)).processName.contains("android")||(procInfos.get(pnum)).processName.contains("system")||(procInfos.get(pnum)).processName.contains("huawei")||(procInfos.get(pnum)).processName.contains("adil"))
-            {
-                Toast.makeText(getApplicationContext(), "system apps", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                actvityManager.killBackgroundProcesses(procInfos.get(pnum).processName);
-                Toast.makeText(getApplicationContext(), "killed "+procInfos.get(pnum).processName, Toast.LENGTH_SHORT).show();
-
-            }
-        }
-
-    }
-
-    void DeleteRecursive(File path) {
-
-        if (path.isDirectory())
-            for (File child : path.listFiles())
-                DeleteRecursive(child);
-
-        try {
-            path.delete();
-            throw new IOException();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-
-    }
-
-/* Fonction de suppression des dossiers fichiers ok mais pas encore le cache */
-    public void xxii_nt() {
-
-        String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String chemin = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cache";
-        File path = new File(chemin);
-        boolean isDirectoryCreated = path.exists();
-
-
-        if (isDirectoryCreated) {
-            //Snackbar.make(view, path.getAbsolutePath(), Snackbar.LENGTH_LONG)
-                    //.setAction("Action", null).show();
-            //deleteDirectory(path);
-
-            DeleteRecursive(path);
-
-        }
-
     }
 }

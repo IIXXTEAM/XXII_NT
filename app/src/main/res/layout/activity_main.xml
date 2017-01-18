@@ -47,10 +47,16 @@
         </LinearLayout>
 
         <Button
-            android:text="Button"
-            android:layout_width="201dp"
+            android:text="Vider le Cache"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btNtCache" />
+
+        <Button
+            android:text="Stopper les processus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btNtProcess" />
 
     </LinearLayout>
 
