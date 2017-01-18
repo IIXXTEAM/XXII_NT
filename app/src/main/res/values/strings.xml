@@ -6,4 +6,6 @@
     <string name="appwidget_text">XXIICLEANER</string>
     <string name="configure">Configurer</string>
     <string name="add_widget">Ajouter le widget</string>
+    <string name="nt_cache">Ajouter le widget</string>
+    <string name="nt_process">Ajouter le widget</string>
 </resources>
