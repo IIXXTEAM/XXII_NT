@@ -32,9 +32,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="399dp"
-            android:layout_weight="0.86"
-            android:orientation="horizontal">
+            android:layout_height="205dp"
+            android:layout_weight="0.97"
+            android:orientation="horizontal"
+            android:soundEffectsEnabled="true"
+            android:splitMotionEvents="true">
 
         </LinearLayout>
 
@@ -42,17 +44,22 @@
             android:id="@+id/btNtCache"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/nt_cache"
-            android:text="@string/nt_cache"
-            tools:text="@string/nt_cache" />
+            android:text="@string/nt_cache" />
 
         <Button
             android:id="@+id/btNtProcess"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/nt_process"
-            android:text="@string/nt_process"
-            tools:text="@string/nt_process" />
+            android:text="@string/nt_process" />
+
+        <ProgressBar
+            android:id="@+id/progressBar4"
+            style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:fitsSystemWindows="false"
+            android:indeterminate="true" />
 
     </LinearLayout>
 
